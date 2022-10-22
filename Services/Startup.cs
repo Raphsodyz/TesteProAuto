@@ -3,7 +3,14 @@ using Application.Interfaces;
 using Data.Context;
 using Data.Repository;
 using Data.Repository.Identity;
+using Domain.Identity;
 using Domain.Intefaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace CadastroWebApi
 {
@@ -23,6 +30,45 @@ namespace CadastroWebApi
             services.AddSwaggerGen();
             services.AddDbContext<CadastroContext>();
 
+            IdentityBuilder builder = services.AddIdentityCore<CadastroUser>(options => {
+                options.SignIn.RequireConfirmedEmail = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 4;
+            });
+
+            builder = new IdentityBuilder(builder.UserType, typeof(CadastroTypes), builder.Services);
+            builder.AddEntityFrameworkStores<CadastroContext>();
+            builder.AddDefaultTokenProviders();
+            builder.AddRoleValidator<RoleValidator<CadastroTypes>>();
+            builder.AddRoleManager<RoleManager<CadastroTypes>>();
+            builder.AddSignInManager<SignInManager<CadastroUser>>();
+
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            })
+            .AddNewtonsoftJson(option => option.SerializerSettings.ReferenceLoopHandling =
+                Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                            .GetBytes(Configuration.GetSection("Token").Value)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
             services.AddCors();
 
             services.AddTransient<IAssociadoRepository, AssociadoRepository>();
@@ -32,7 +78,8 @@ namespace CadastroWebApi
 
             services.AddTransient<IAssociadoApplication, AssociadoApplication>();
             services.AddTransient<ICarroApplication, CarroApplication>();
-            services.AddTransient<IEnderecoApplication, EnderecoApplication>();   
+            services.AddTransient<IEnderecoApplication, EnderecoApplication>();
+            services.AddTransient<ICadastroUserApplication, CadastroUserApplication>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }

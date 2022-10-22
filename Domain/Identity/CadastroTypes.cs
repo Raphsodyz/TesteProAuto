@@ -9,6 +9,6 @@ namespace Domain.Identity
 {
     public class CadastroTypes : IdentityRole<int>
     {
-        public List<CadastroTypes> UserTypes { get; set; }
+        public List<CadastroUserTypes> UserTypes { get; set; }
     }
 }

@@ -1,9 +1,13 @@
 ﻿using Data.Context;
-using Domain.Entities;
 using Domain.Identity;
 using Domain.Intefaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Data.Repository.Identity
 {
@@ -12,18 +16,37 @@ namespace Data.Repository.Identity
         protected readonly UserManager<CadastroUser> _userManager;
         protected readonly SignInManager<CadastroUser> _signInManager;
         protected readonly CadastroContext _cadastroContext;
+        protected readonly IConfiguration _configuration;
 
         public CadastroUserRepository(UserManager<CadastroUser> userManager,
                                   SignInManager<CadastroUser> signInManager,
-                                  CadastroContext cadastroContext)
+                                  CadastroContext cadastroContext,
+                                  IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _cadastroContext = cadastroContext;
+            _configuration = configuration;
         }
 
         public async Task<IdentityResult> Register(CadastroUser cadastroUser)
         {
+            var endereco = cadastroUser.CriarEndereco(cadastroUser);
+            await _cadastroContext.Enderecos.AddAsync(endereco);
+            await _cadastroContext.SaveChangesAsync();
+            int enderecoId = endereco.Id;
+
+            var carro = cadastroUser.CriarCarro(cadastroUser);
+            await _cadastroContext.Carros.AddAsync(carro);
+            await _cadastroContext.SaveChangesAsync();
+            int carroId = carro.Id;
+
+            var associado = cadastroUser.CriarAssociado(cadastroUser);
+            associado.CarroId = enderecoId;
+            associado.EnderecoId = carroId;
+            await _cadastroContext.Associados.AddAsync(associado);
+            await _cadastroContext.SaveChangesAsync();
+
             return await _userManager.CreateAsync(cadastroUser, cadastroUser.CPF);
         }
 
@@ -35,6 +58,39 @@ namespace Data.Repository.Identity
         public async Task<SignInResult> Login(CadastroUser cadastroUser, string placa)
         {
             return await _signInManager.CheckPasswordSignInAsync(cadastroUser, placa, true);
+        }
+
+        public async Task<string> JWT(CadastroUser cadastroUser)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, cadastroUser.Id.ToString()),
+                new Claim(ClaimTypes.Name, cadastroUser.CPF)
+            };
+
+            var types = await _userManager.GetRolesAsync(cadastroUser);
+
+            foreach (var type in types)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, type));
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.ASCII
+            .GetBytes(_configuration.GetSection("Token").Value));
+
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = credentials
+            };
+
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.CreateToken(tokenDescriptor);
+
+            return handler.WriteToken(token);
         }
     }
 }

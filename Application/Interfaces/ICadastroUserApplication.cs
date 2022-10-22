@@ -12,6 +12,7 @@ namespace Application.Interfaces
     public interface ICadastroUserApplication
     {
         Task<IdentityResult> Register(RegisterDTO registerDTO);
+        Task<string> JWT(CadastroUser cadastroUser);
         Task<CadastroUser> UserExist(string cpf);
         Task<SignInResult> Login(LoginDTO loginDTO);
     }
