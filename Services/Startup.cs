@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.DTOs;
 using Application.Interfaces;
 using Data.Context;
 using Data.Repository;
@@ -82,6 +83,92 @@ namespace CadastroWebApi
             services.AddTransient<ICadastroUserApplication, CadastroUserApplication>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddHATEOAS(options =>
+            {
+                //Associado
+                options.AddLink<AssociadoDTO>("self",
+                    "Get-Associado",
+                    HttpMethod.Get,
+                    (x) => new { id = x.Id });
+
+                options.AddLink<AssociadoDTO>("todos-associados",
+                   "Get-Associados",
+                   HttpMethod.Get,
+                   null);
+
+                options.AddLink<AssociadoDTO>("deletar-associado",
+                    "Delete-Associado",
+                    HttpMethod.Delete,
+                    (x) => new { id = x.Id });
+
+                options.AddLink<AssociadoDTO>("editar-associado",
+                    "Edit-Associado",
+                    HttpMethod.Put,
+                    (x) => new { id = x.Id });
+
+                options.AddLink<AssociadoDTO>("criar-associado",
+                    "Create-Associado",
+                    HttpMethod.Post,
+                    null);
+
+                options.AddLink<AssociadoDTO>("show-associado",
+                    "Show-Associado",
+                    HttpMethod.Get,
+                    null);
+
+                //Endereco
+                options.AddLink<EnderecoDTO>("self",
+                    "Get-Endereco",
+                    HttpMethod.Get,
+                    (x) => new { id = x.Id });
+
+                options.AddLink<EnderecoDTO>("todos-enderecos",
+                    "Get-Enderecos",
+                    HttpMethod.Get,
+                    null);
+
+                options.AddLink<EnderecoDTO>("editar-endereco",
+                    "Edit-Endereco",
+                    HttpMethod.Put,
+                    (x) => new { id = x.Id });
+
+                options.AddLink<EnderecoDTO>("criar-endereco",
+                    "Create-Endereco",
+                    HttpMethod.Post,
+                    null);
+
+                options.AddLink<EnderecoDTO>("deletar-endereco",
+                    "Delete-Endereco",
+                    HttpMethod.Delete,
+                    (x) => new { id = x.Id });
+
+                //Carros
+                options.AddLink<CarroDTO>("todos-carros",
+                    "Get-Carros",
+                    HttpMethod.Get,
+                    null);
+
+                options.AddLink<CarroDTO>("self",
+                    "Get-Carro",
+                    HttpMethod.Get,
+                    (x) => new { id = x.Id });
+
+                options.AddLink<CarroDTO>("editar-carro",
+                    "Edit-Carro",
+                    HttpMethod.Put,
+                    (x) => new { id = x.Id });
+
+                options.AddLink<CarroDTO>("criar-carro",
+                    "Create-Carro",
+                    HttpMethod.Post,
+                    null);
+
+                options.AddLink<CarroDTO>("deletar-carro",
+                    "Delete-Carro",
+                    HttpMethod.Delete,
+                    (x) => new { id = x.Id });
+            });
         }
 
         public void Configure(WebApplication app, IWebHostEnvironment environment)

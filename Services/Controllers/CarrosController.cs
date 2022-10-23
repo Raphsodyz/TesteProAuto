@@ -3,6 +3,7 @@ using Application;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Domain.Entities;
 
 namespace CadastroWebApi.Controllers
 {
@@ -16,14 +17,14 @@ namespace CadastroWebApi.Controllers
             _carroApplication = carroApplication;
         }
 
-        [HttpGet("all")]
+        [HttpGet("all", Name = "Get-Carros")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             try
             {
                 var carros = await _carroApplication.GetAll();
-                return Ok(carros);
+                return this.HATEOASResult(carros, (a => this.Ok(a)));
             }
             catch (Exception ex)
             {
@@ -31,14 +32,14 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "Get-Carro")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(int id)
         {
             try
             {
                 var carro = await _carroApplication.Get(id);
-                return Ok(carro);
+                return this.HATEOASResult(carro, (a) => this.Ok(a));
             }
             catch (Exception ex)
             {
@@ -46,7 +47,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut(Name = "Edit-Carro")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(CarroDTO carroDTO)
         {
@@ -54,7 +55,7 @@ namespace CadastroWebApi.Controllers
             {
                 await _carroApplication.Edit(carroDTO);
                 await _carroApplication.Save();
-                return Ok("Dados atualizados com sucesso!");
+                return this.HATEOASResult(null, (a) => this.Ok("Dados atualizados com sucesso!"));
             }
             catch (Exception ex)
             {
@@ -62,7 +63,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost(Name = "Create-Carro")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Add(CarroDTO carroDTO)
         {
@@ -70,7 +71,8 @@ namespace CadastroWebApi.Controllers
             {
                 await _carroApplication.Add(carroDTO);
                 await _carroApplication.Save();
-                return Created("Carro adicionado!", new { Carro = carroDTO.Modelo });
+                return this.HATEOASResult(null, (a) => this.Created("Carro adicionado!",
+                    new { Carro = carroDTO.Modelo }));
             }
             catch (Exception ex)
             {
@@ -78,7 +80,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "Delete-Carro")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Remove(int id)
         {
@@ -86,7 +88,7 @@ namespace CadastroWebApi.Controllers
             {
                 await _carroApplication.Delete(id);
                 await _carroApplication.Save();
-                return Ok();
+                return this.HATEOASResult(null, (a) => this.Ok("Dados deletados com sucesso!"));
             }
             catch (Exception ex)
             {

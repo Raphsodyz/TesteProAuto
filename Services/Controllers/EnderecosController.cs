@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,14 +16,14 @@ namespace CadastroWebApi.Controllers
             _enderecoApplication = enderecoApplication;
         }
 
-        [HttpGet("all")]
+        [HttpGet("all", Name = "Get-Enderecos")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             try
             {
                 var enderecos = await _enderecoApplication.GetAll();
-                return Ok(enderecos);
+                return this.HATEOASResult(enderecos, (a => this.Ok(a)));
             }
             catch (Exception ex)
             {
@@ -30,14 +31,14 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "Get-Endereco")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(int id)
         {
             try
             {
                 var endereco = await _enderecoApplication.Get(id);
-                return Ok(endereco);
+                return this.HATEOASResult(endereco, (a) => this.Ok(a));
             }
             catch (Exception ex)
             {
@@ -45,7 +46,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut(Name = "Edit-Endereco")]
         [Authorize]
         public async Task<IActionResult> Edit(EnderecoDTO enderecoDTO)
         {
@@ -53,7 +54,7 @@ namespace CadastroWebApi.Controllers
             {
                 await _enderecoApplication.Edit(enderecoDTO);
                 await _enderecoApplication.Save();
-                return Ok("Dados atualizados com sucesso!");
+                return this.HATEOASResult(null, (a) => this.Ok("Dados atualizados com sucesso!"));
             }
             catch (Exception ex)
             {
@@ -61,7 +62,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost(Name = "Create-Endereco")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Add(EnderecoDTO enderecoDTO)
         {
@@ -69,7 +70,8 @@ namespace CadastroWebApi.Controllers
             {
                 await _enderecoApplication.Add(enderecoDTO);
                 await _enderecoApplication.Save();
-                return Created("Endereco adicionado!", enderecoDTO);
+                return this.HATEOASResult(null, (a) => this.Created("Endereco adicionado!",
+                    new { Endereco = enderecoDTO }));
             }
             catch (Exception ex)
             {
@@ -77,7 +79,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "Delete-Endereco")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Remove(int id)
         {
@@ -85,7 +87,7 @@ namespace CadastroWebApi.Controllers
             {
                 await _enderecoApplication.Delete(id);
                 await _enderecoApplication.Save();
-                return Ok();
+                return this.HATEOASResult(null, (a) => this.Ok("Dados deletados com sucesso!"));
             }
             catch (Exception ex)
             {

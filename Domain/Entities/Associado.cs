@@ -10,6 +10,5 @@
         public Carro Carro { get; set; }
         public int EnderecoId { get; set; }
         public Endereco Endereco { get; set; }
-
     }
 }

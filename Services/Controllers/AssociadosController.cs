@@ -16,14 +16,14 @@ namespace CadastroWebApi.Controllers
             _associadoApplication = associadoApplication;
         }
 
-        [HttpGet("all")]
+        [HttpGet("all", Name = "Get-Associados")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             try
             {
                 var associados = await _associadoApplication.GetAll();
-                return Ok(associados);
+                return this.HATEOASResult(associados, (a => this.Ok(a)));
             }
             catch (Exception ex)
             {
@@ -31,14 +31,14 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "Get-Associado")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(int id)
         {
             try
             {
                 var associado = await _associadoApplication.Get(id);
-                return Ok(associado);
+                return this.HATEOASResult(associado, (a) => this.Ok(a));
             }
             catch (Exception ex)
             {
@@ -46,7 +46,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpGet("show")]
+        [HttpGet("show", Name = "Show-Associado")]
         [Authorize]
         public async Task<IActionResult> Show()
         {
@@ -54,7 +54,7 @@ namespace CadastroWebApi.Controllers
             {
                 var associado = User.Identity.Name;
                 var show = await _associadoApplication.GetByCPF(associado);
-                return Ok(show);
+                return this.HATEOASResult(show, (a) => this.Ok(a));
             }
             catch (Exception ex)
             {
@@ -62,7 +62,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpPut]
+        [HttpPut(Name = "Edit-Associado")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(AssociadoDTO associadoDTO)
         {
@@ -70,7 +70,7 @@ namespace CadastroWebApi.Controllers
             {
                 await _associadoApplication.Edit(associadoDTO);
                 await _associadoApplication.Save();
-                return Ok("Dados atualizados com sucesso!");
+                return this.HATEOASResult(null, (a) => this.Ok("Dados atualizados com sucesso!"));
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost(Name = "Create-Associado")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Add(AssociadoDTO associadoDTO)
         {
@@ -86,7 +86,8 @@ namespace CadastroWebApi.Controllers
             {
                 await _associadoApplication.Add(associadoDTO);
                 await _associadoApplication.Save();
-                return Created("Associado adicionado!", new { Associado = associadoDTO.Nome });
+                return this.HATEOASResult(null, (a) => this.Created("Associado adicionado!", 
+                    new { Associado = associadoDTO.Nome }));
             }
             catch (Exception ex)
             {
@@ -94,7 +95,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "Delete-Associado")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Remove(int id)
         {
@@ -102,7 +103,7 @@ namespace CadastroWebApi.Controllers
             {
                 await _associadoApplication.Delete(id);
                 await _associadoApplication.Save();
-                return Ok();
+                return this.HATEOASResult(null, (a) => this.Ok("Dados deletados com sucesso!"));
             }
             catch (Exception ex)
             {
