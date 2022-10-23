@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,6 +43,22 @@ namespace CadastroWebApi.Controllers
             catch (Exception ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("show")]
+        [Authorize]
+        public async Task<IActionResult> Show()
+        {
+            try
+            {
+                var associado = User.Identity.Name;
+                var show = await _associadoApplication.GetByCPF(associado);
+                return Ok(show);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 

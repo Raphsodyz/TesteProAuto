@@ -70,6 +70,17 @@ namespace Application
                 return result;
         }
 
+        public async Task<AssociadoDTO> GetByCPF(string cpf)
+        {
+            var associado = _mapper.Map<AssociadoDTO>(await _associadoRepository.GetByCPF(cpf));
+            if (associado == null)
+            {
+                throw new Exception("Associado não encontrado.");
+            }
+            else
+                return associado;
+        }
+
         public async Task<bool> Save()
         {
             return await _associadoRepository.Save();
