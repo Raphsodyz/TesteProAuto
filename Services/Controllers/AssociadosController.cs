@@ -1,5 +1,6 @@
 ﻿using Application.DTOs;
 using Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CadastroWebApi.Controllers
@@ -15,6 +16,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -29,6 +31,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(int id)
         {
             try
@@ -43,6 +46,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(AssociadoDTO associadoDTO)
         {
             try
@@ -58,6 +62,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Add(AssociadoDTO associadoDTO)
         {
             try
@@ -73,6 +78,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Remove(int id)
         {
             try

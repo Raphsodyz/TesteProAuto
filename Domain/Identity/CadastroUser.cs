@@ -1,6 +1,9 @@
 ﻿using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Domain.Identity
 {
@@ -13,7 +16,7 @@ namespace Domain.Identity
         [JsonIgnore]
         public Associado Associado { get; set; }
 
-        public Endereco CriarEndereco(CadastroUser cadastroUser)
+        public Endereco CreateEndereco(CadastroUser cadastroUser)
         {
             Endereco endereco = new Endereco()
             {
@@ -31,7 +34,7 @@ namespace Domain.Identity
             return endereco;
         }
 
-        public Carro CriarCarro(CadastroUser cadastroUser)
+        public Carro CreateCarro(CadastroUser cadastroUser)
         {
             Carro carro = new Carro()
             {
@@ -43,7 +46,7 @@ namespace Domain.Identity
             return carro;
         }
 
-        public Associado CriarAssociado(CadastroUser cadastroUser)
+        public Associado CreateAssociado(CadastroUser cadastroUser)
         {
             Associado associado = new Associado() 
             {
@@ -54,6 +57,21 @@ namespace Domain.Identity
             };
 
             return associado;
+        }
+
+        public CadastroUser CreateUser(CadastroUser cadastroUser)
+        {
+            string userName = cadastroUser.Associado.Carro.Placa.Replace(" ", string.Empty);
+
+            CadastroUser user = new CadastroUser()
+            {
+                CPF = cadastroUser.Associado.CPF,
+                Placa = cadastroUser.Associado.Carro.Placa,
+                UserName = userName,
+                PhoneNumber = cadastroUser.Associado.Telefone
+            };
+
+            return user;
         }
     }
 }

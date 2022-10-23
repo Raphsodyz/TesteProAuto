@@ -31,23 +31,27 @@ namespace Data.Repository.Identity
 
         public async Task<IdentityResult> Register(CadastroUser cadastroUser)
         {
-            var endereco = cadastroUser.CriarEndereco(cadastroUser);
+            var endereco = cadastroUser.CreateEndereco(cadastroUser);
             await _cadastroContext.Enderecos.AddAsync(endereco);
             await _cadastroContext.SaveChangesAsync();
             int enderecoId = endereco.Id;
 
-            var carro = cadastroUser.CriarCarro(cadastroUser);
+            var carro = cadastroUser.CreateCarro(cadastroUser);
             await _cadastroContext.Carros.AddAsync(carro);
             await _cadastroContext.SaveChangesAsync();
             int carroId = carro.Id;
 
-            var associado = cadastroUser.CriarAssociado(cadastroUser);
+            var associado = cadastroUser.CreateAssociado(cadastroUser);
             associado.CarroId = enderecoId;
             associado.EnderecoId = carroId;
             await _cadastroContext.Associados.AddAsync(associado);
             await _cadastroContext.SaveChangesAsync();
+            int associadoId = associado.Id;
 
-            return await _userManager.CreateAsync(cadastroUser, cadastroUser.CPF);
+            var user = cadastroUser.CreateUser(cadastroUser);
+            user.AssociadoId = associadoId;
+
+            return await _userManager.CreateAsync(user, cadastroUser.Placa);
         }
 
         public async Task<CadastroUser> UserExist(string cpf)

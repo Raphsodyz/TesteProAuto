@@ -2,6 +2,7 @@
 using Application;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CadastroWebApi.Controllers
 {
@@ -16,6 +17,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -30,6 +32,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Get(int id)
         {
             try
@@ -44,6 +47,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(CarroDTO carroDTO)
         {
             try
@@ -59,6 +63,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Add(CarroDTO carroDTO)
         {
             try
@@ -74,6 +79,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Remove(int id)
         {
             try
