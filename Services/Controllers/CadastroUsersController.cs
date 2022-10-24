@@ -54,7 +54,7 @@ namespace Services.Controllers
                 }
                 else
                 {
-                    return Unauthorized("Dados de conta incorretos.");
+                    return Unauthorized("CPF ou placa incorretos.");
                 }
             }
             catch (Exception ex)

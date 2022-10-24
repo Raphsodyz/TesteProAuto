@@ -34,7 +34,7 @@ namespace Application
             
             if (user == null)
             {
-                throw new Exception("Usuário não encontrado.");
+                return SignInResult.Failed;
             }
             
             var access = await _cadastroUserRepository.Login(user, _mapper.Map<CadastroUser>(loginDTO).Placa);
@@ -44,7 +44,7 @@ namespace Application
                 return SignInResult.Success;
             }
 
-            throw new Exception("Não é possível se logar no momento.");
+            return SignInResult.Failed;
         }
 
         public async Task<IdentityResult> Register(RegisterDTO registerDTO)

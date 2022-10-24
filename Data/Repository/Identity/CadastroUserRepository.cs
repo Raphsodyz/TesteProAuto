@@ -56,7 +56,7 @@ namespace Data.Repository.Identity
 
         public async Task<CadastroUser> UserExist(string cpf)
         {
-            return await _cadastroContext.Users.Where(c => c.CPF == cpf).FirstAsync();
+            return await _cadastroContext.Users.Where(c => c.CPF == cpf).FirstOrDefaultAsync();
         }
 
         public async Task<SignInResult> Login(CadastroUser cadastroUser, string placa)
