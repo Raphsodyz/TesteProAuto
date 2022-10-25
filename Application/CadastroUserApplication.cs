@@ -23,9 +23,9 @@ namespace Application
             _mapper = mapper;
         }
 
-        public async Task<string> JWT(CadastroUser cadastroUser)
+        public async Task<string> JWT(CadastroUserDTO cadastroUserDTO)
         {
-            return await _cadastroUserRepository.JWT(cadastroUser);
+            return await _cadastroUserRepository.JWT(_mapper.Map<CadastroUser>(cadastroUserDTO));
         }
 
         public async Task<SignInResult> Login(LoginDTO loginDTO)
@@ -57,12 +57,12 @@ namespace Application
                 return IdentityResult.Success;
             }
             else
-                throw new Exception("Criação de contas está disponível.");
+                return IdentityResult.Failed();
         }
 
-        public async Task<CadastroUser> UserExist(string cpf)
+        public async Task<CadastroUserDTO> UserExist(string cpf)
         {
-            return await _cadastroUserRepository.UserExist(cpf);
+            return _mapper.Map<CadastroUserDTO>(await _cadastroUserRepository.UserExist(cpf));
         }
     }
 }

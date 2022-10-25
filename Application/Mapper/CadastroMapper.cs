@@ -13,6 +13,7 @@ namespace Application.Mapper
             CreateMap<CarroDTO, Carro>().ReverseMap();
             CreateMap<EnderecoDTO, Endereco>().ReverseMap();
             CreateMap<LoginDTO, CadastroUser>().ReverseMap();
+            CreateMap<CadastroUserDTO, CadastroUser>().ReverseMap();
             CreateMap<RegisterDTO, CadastroUser>()
                 .ForMember(
                     view => view.CPF,

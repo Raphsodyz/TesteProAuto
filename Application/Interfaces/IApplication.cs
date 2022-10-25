@@ -10,8 +10,8 @@ namespace Application.Interfaces
     {
         Task<List<T>> GetAll();
         Task<T> Get(int id);
-        Task Edit(T entity);
-        Task Add(T entity);
+        Task Edit(T dto);
+        Task Add(T dto);
         Task Delete(int id);
         Task<bool> Save();
     }

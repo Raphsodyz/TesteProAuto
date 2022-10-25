@@ -13,9 +13,9 @@ namespace Application.DTOs
         [Range(0, int.MaxValue, ErrorMessage = "ID inválido.")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "O campo 'Nome' não pode estar vazio.")]
-        [Display(Name = "Nome")]
-        [StringLength(50, ErrorMessage = "Digite um nome válido.", MinimumLength = 6)]
+        [Required(ErrorMessage = "O campo 'Placa' não pode estar vazio.")]
+        [Display(Name = "Placa")]
+        [StringLength(50, ErrorMessage = "Digite uma Placa válida.", MinimumLength = 6)]
         public string Placa { get; set; }
 
         [Required(ErrorMessage = "O campo 'Modelo' não pode estar vazio.")]
