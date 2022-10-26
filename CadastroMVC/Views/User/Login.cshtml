@@ -5,6 +5,12 @@
 <div class="text-center">
     <h1 class="display-4">Bem vindo(a) de volta!</h1>
     <p>Digite seu CPF e Placa para acesso.</p>
-
+    @if(TempData["Success"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["Success"]
+        </div>
+    }
     @Html.Partial("_LoginPartial")
+    <p>Ou clique <a asp-action="Register">aqui</a> para se registrar!</p>
 </div>

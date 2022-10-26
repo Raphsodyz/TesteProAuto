@@ -1,4 +1,5 @@
-﻿using Application.DTOs;
+﻿using Application;
+using Application.DTOs;
 using Application.Interfaces;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -46,7 +47,7 @@ namespace CadastroWebApi.Controllers
             }
         }
 
-        [HttpGet("show", Name = "Show-Associado")]
+        [HttpGet("self/show", Name = "Own-Show")]
         [Authorize]
         public async Task<IActionResult> Show()
         {
@@ -54,7 +55,43 @@ namespace CadastroWebApi.Controllers
             {
                 var associado = User.Identity.Name;
                 var show = await _associadoApplication.GetByCPF(associado);
-                return this.HATEOASResult(show, (a) => this.Ok(a));
+                if(show != null)
+                {
+                    return this.HATEOASResult(show, (a) => this.Ok(a));
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("self/update", Name = "Own-Update")]
+        [Authorize]
+        public async Task<IActionResult> Update(EnderecoDTO enderecoDTO)
+        {
+            try
+            {
+                var associado = User.Identity.Name;
+                var user = await _associadoApplication.GetByCPF(associado);
+
+                if (user != null)
+                {
+                    enderecoDTO.Id = user.EnderecoId;
+                    user.Endereco = enderecoDTO;
+                    await _associadoApplication.Edit(user);
+                    await _associadoApplication.Save();
+                    return this.HATEOASResult(null, (a) => this.Ok("Dados atualizados com sucesso!"));
+                }
+                else
+                {
+                    return NotFound();
+                }
+
             }
             catch (Exception ex)
             {

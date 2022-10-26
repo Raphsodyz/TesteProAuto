@@ -34,7 +34,7 @@ namespace Application.DTOs
         public int CarroId { get; set; }
 
         [JsonIgnore]
-        public Carro Carro { get; set; }
+        public CarroDTO Carro { get; set; }
 
         [Display(Name = "EnderecoId")]
         [Required(ErrorMessage = "O campo 'EnderecoId' não pode estar vazio.")]
@@ -42,6 +42,6 @@ namespace Application.DTOs
         public int EnderecoId { get; set; }
 
         [JsonIgnore]
-        public Endereco Endereco { get; set; }
+        public EnderecoDTO Endereco { get; set; }
     }
 }

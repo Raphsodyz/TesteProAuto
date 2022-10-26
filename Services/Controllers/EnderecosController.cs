@@ -47,7 +47,7 @@ namespace CadastroWebApi.Controllers
         }
 
         [HttpPut(Name = "Edit-Endereco")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(EnderecoDTO enderecoDTO)
         {
             try

@@ -1,6 +1,6 @@
 ﻿namespace CadastroMVC.Models
 {
-    public class Token
+    public class JWT
     {
         public string token { get; set; }
     }

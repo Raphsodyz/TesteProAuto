@@ -1,10 +1,9 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace Application.DTOs
+namespace CadastroMVC.Models.ViewModel
 {
-    public class RegisterDTO
+    public class RegisterViewModel
     {
         [Required(ErrorMessage = "O campo 'Nome' não pode estar vazio.")]
         [Display(Name = "Nome")]

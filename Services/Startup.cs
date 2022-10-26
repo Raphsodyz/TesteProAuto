@@ -112,9 +112,14 @@ namespace CadastroWebApi
                     HttpMethod.Post,
                     null);
 
-                options.AddLink<AssociadoDTO>("show-associado",
-                    "Show-Associado",
+                options.AddLink<AssociadoDTO>("mostrar-associado",
+                    "Own-Show",
                     HttpMethod.Get,
+                    null);
+
+                options.AddLink<AssociadoDTO>("mostrar-associado",
+                    "Own-Update",
+                    HttpMethod.Put,
                     null);
 
                 //Endereco

@@ -1,41 +1,14 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
-namespace Application.DTOs
+namespace CadastroMVC.Models.ViewModel
 {
-    public class RegisterDTO
+    public class EnderecoViewModel
     {
-        [Required(ErrorMessage = "O campo 'Nome' não pode estar vazio.")]
-        [Display(Name = "Nome")]
-        [StringLength(50, ErrorMessage = "Digite um nome válido.", MinimumLength = 2)]
-        public string Nome { get; set; }
-
-        [Required(ErrorMessage = "O campo 'CPF' não pode estar vazio.")]
-        [Display(Name = "CPF")]
-        [StringLength(50, ErrorMessage = "Digite um CPF válido.", MinimumLength = 11)]
-        public string CPF { get; set; }
-
-        [Required(ErrorMessage = "O campo 'Telefone' não pode estar vazio.")]
-        [Phone(ErrorMessage = "O campo deve estar no formato de telefone")]
-        [Display(Name = "Telefone")]
-        [StringLength(70, ErrorMessage = "Digite um telefone válido.", MinimumLength = 8)]
-        [DataType(DataType.PhoneNumber)]
-        public string Telefone { get; set; }
-
-        [Required(ErrorMessage = "O campo 'Placa' não pode estar vazio.")]
-        [Display(Name = "Placa")]
-        [StringLength(50, ErrorMessage = "Digite uma Placa válida.", MinimumLength = 6)]
-        public string Placa { get; set; }
-
-        [Required(ErrorMessage = "O campo 'Modelo' não pode estar vazio.")]
-        [Display(Name = "Modelo")]
-        [StringLength(50, ErrorMessage = "Digite um modelo válido.", MinimumLength = 2)]
-        public string Modelo { get; set; }
-
         [Required(ErrorMessage = "O campo 'CEP' não pode estar vazio.")]
         [Display(Name = "CEP")]
         [StringLength(50, ErrorMessage = "Digite um CEP válido.", MinimumLength = 8)]
+        [DataType(DataType.PostalCode)]
         public string CEP { get; set; }
 
         [Required(ErrorMessage = "O campo 'Rua' não pode estar vazio.")]
