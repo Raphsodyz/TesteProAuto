@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Domain.Identity
 {

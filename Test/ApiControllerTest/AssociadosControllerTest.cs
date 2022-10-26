@@ -303,13 +303,14 @@ namespace Test.ApiTest
         }
 
         [Fact]
-        public async Task ShowAssociado_AssociadoSession_ReturnOk()
+        public async Task Show_AssociadoSession_ReturnOk()
         {
             //Arrange
             CadastroUser cadastroUser = new CadastroUser()
             {
                 Id = 0,
-                CPF = "123434532342"
+                CPF = "123434532342",
+                Placa = "2541OAX"
             };
 
             AssociadoDTO associado = new AssociadoDTO()
@@ -324,11 +325,11 @@ namespace Test.ApiTest
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier, cadastroUser.Id.ToString()),
-                new Claim(ClaimTypes.Name, cadastroUser.CPF)
+                new Claim(ClaimTypes.Name, cadastroUser.Placa)
             }));
 
             var repositoryTest = new Mock<IAssociadoApplication>();
-            repositoryTest.Setup(r => r.GetByCPF(It.IsAny<string>()))
+            repositoryTest.Setup(r => r.GetByPlaca(It.IsAny<string>()))
                 .ReturnsAsync(associado);
 
             var controller = new AssociadosController(repositoryTest.Object);
@@ -345,13 +346,14 @@ namespace Test.ApiTest
         }
 
         [Fact]
-        public async Task ShowAssociado_AssociadoException_ReturnBadRequest()
+        public async Task Show_AssociadoNull_ReturnNotFound()
         {
             //Arrange
             CadastroUser cadastroUser = new CadastroUser()
             {
                 Id = 0,
-                CPF = "123434532342"
+                CPF = "123434532342",
+                Placa = "2541OAX"
             };
 
             AssociadoDTO associado = new AssociadoDTO()
@@ -366,11 +368,54 @@ namespace Test.ApiTest
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.NameIdentifier, cadastroUser.Id.ToString()),
-                new Claim(ClaimTypes.Name, cadastroUser.CPF)
+                new Claim(ClaimTypes.Name, cadastroUser.Placa)
             }));
 
             var repositoryTest = new Mock<IAssociadoApplication>();
-            repositoryTest.Setup(r => r.GetByCPF(It.IsAny<string>()))
+            repositoryTest.Setup(r => r.GetByPlaca(It.IsAny<string>()))
+                .ReturnsAsync(() => null);
+
+            var controller = new AssociadosController(repositoryTest.Object);
+            controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = null }
+            };
+
+            //Act
+            var result = await controller.Show();
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task Show_AssociadoException_ReturnBadRequest()
+        {
+            //Arrange
+            CadastroUser cadastroUser = new CadastroUser()
+            {
+                Id = 0,
+                CPF = "123434532342",
+                Placa = "2541OAX"
+            };
+
+            AssociadoDTO associado = new AssociadoDTO()
+            {
+                Nome = "Arthur Vinícius Souza Ribeiro",
+                CPF = "123434532342",
+                Telefone = "031 995331227",
+                CarroId = 22,
+                EnderecoId = 22
+            };
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, cadastroUser.Id.ToString()),
+                new Claim(ClaimTypes.Name, cadastroUser.Placa)
+            }));
+
+            var repositoryTest = new Mock<IAssociadoApplication>();
+            repositoryTest.Setup(r => r.GetByPlaca(It.IsAny<string>()))
                 .Throws<Exception>();
 
             var controller = new AssociadosController(repositoryTest.Object);
@@ -381,6 +426,232 @@ namespace Test.ApiTest
 
             //Act
             var result = await controller.Show();
+
+            //Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task Update_AssociadoEndereco_ReturnOk()
+        {
+            //Arrange
+            CadastroUser cadastroUser = new CadastroUser()
+            {
+                Id = 0,
+                CPF = "123434532342",
+                Placa = "2541OAX"
+            };
+
+            AssociadoDTO associado = new AssociadoDTO()
+            {
+                Nome = "Arthur Vinícius Souza Ribeiro",
+                CPF = "123434532342",
+                Telefone = "031 995331227",
+                CarroId = 22,
+                Carro = new CarroDTO
+                {
+                    Placa = "0XAB40",
+                    Modelo = "Mercedes Benz",
+                },
+                EnderecoId = 22,
+                Endereco = new EnderecoDTO
+                {
+                    CEP = "34156278",
+                    Rua = "Tancredo Neves",
+                    Numero = 220,
+                    Bairro = "Centro",
+                    Cidade =  "São Paulo",
+                    Estado = "São Paulo",
+                    Pais = "Brasil",
+                    Observacao = "Esquina com Bandeirantes 320"
+                }
+            };
+
+            EnderecoDTO newEndereco = new EnderecoDTO()
+            {
+                CEP = "34156278",
+                Rua = associado.Endereco.Rua + " Branco",
+                Numero = associado.Endereco.Numero + 4,
+                Bairro = "Sul",
+                Cidade = "Belo Horizonte",
+                Estado = "Minas Gerais",
+                Pais = "Brasil",
+                Observacao = "Esquina com Bandeirantes 320"
+            };
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, cadastroUser.Id.ToString()),
+                new Claim(ClaimTypes.Name, cadastroUser.Placa)
+            }));
+
+            var repositoryTest = new Mock<IAssociadoApplication>();
+            repositoryTest.Setup(r => r.GetByPlaca(It.IsAny<string>()))
+                .ReturnsAsync(associado);
+
+            repositoryTest.Setup(r => r.Edit(It.IsAny<AssociadoDTO>())).Returns(Task.FromResult(associado));
+
+            var controller = new AssociadosController(repositoryTest.Object);
+            controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
+
+            //Act
+            var result = await controller.Update(newEndereco);
+
+            //Assert
+            Assert.IsType<HATEOASResult>(result);
+
+            newEndereco.Id.Should().Be(associado.Endereco.Id);
+            newEndereco.Rua.Should().Be("Tancredo Neves Branco");
+            newEndereco.Numero.Should().Be(224);
+            newEndereco.Bairro.Should().Be("Sul");
+            newEndereco.Cidade.Should().Be("Belo Horizonte");
+            newEndereco.Estado.Should().Be("Minas Gerais");
+        }
+
+        [Fact]
+        public async Task Update_AssociadoNotFound_ReturnNotFound()
+        {
+            //Arrange
+            CadastroUser cadastroUser = new CadastroUser()
+            {
+                Id = 0,
+                CPF = "123434532342",
+                Placa = "2541OAX"
+            };
+
+            AssociadoDTO associado = new AssociadoDTO()
+            {
+                Nome = "Arthur Vinícius Souza Ribeiro",
+                CPF = "123434532342",
+                Telefone = "031 995331227",
+                CarroId = 22,
+                Carro = new CarroDTO
+                {
+                    Placa = "0XAB40",
+                    Modelo = "Mercedes Benz",
+                },
+                EnderecoId = 22,
+                Endereco = new EnderecoDTO
+                {
+                    CEP = "34156278",
+                    Rua = "Tancredo Neves",
+                    Numero = 220,
+                    Bairro = "Centro",
+                    Cidade = "São Paulo",
+                    Estado = "São Paulo",
+                    Pais = "Brasil",
+                    Observacao = "Esquina com Bandeirantes 320"
+                }
+            };
+
+            EnderecoDTO newEndereco = new EnderecoDTO()
+            {
+                CEP = "34156278",
+                Rua = associado.Endereco.Rua + " Branco",
+                Numero = associado.Endereco.Numero + 4,
+                Bairro = "Sul",
+                Cidade = "Belo Horizonte",
+                Estado = "Minas Gerais",
+                Pais = "Brasil",
+                Observacao = "Esquina com Bandeirantes 320"
+            };
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, cadastroUser.Id.ToString()),
+                new Claim(ClaimTypes.Name, cadastroUser.Placa)
+            }));
+
+            var repositoryTest = new Mock<IAssociadoApplication>();
+            repositoryTest.Setup(r => r.GetByPlaca(It.IsAny<string>()))
+                .ReturnsAsync(() => null);
+
+            repositoryTest.Setup(r => r.Edit(It.IsAny<AssociadoDTO>())).Returns(Task.FromResult(associado));
+
+            var controller = new AssociadosController(repositoryTest.Object);
+            controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = null }
+            };
+
+            //Act
+            var result = await controller.Update(newEndereco);
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task Update_AssociadoEditError_ReturnBadRequest()
+        {
+            //Arrange
+            CadastroUser cadastroUser = new CadastroUser()
+            {
+                Id = 0,
+                CPF = "123434532342",
+                Placa = "2541OAX"
+            };
+
+            AssociadoDTO associado = new AssociadoDTO()
+            {
+                Nome = "Arthur Vinícius Souza Ribeiro",
+                CPF = "123434532342",
+                Telefone = "031 995331227",
+                CarroId = 22,
+                Carro = new CarroDTO
+                {
+                    Placa = "0XAB40",
+                    Modelo = "Mercedes Benz",
+                },
+                EnderecoId = 22,
+                Endereco = new EnderecoDTO
+                {
+                    CEP = "34156278",
+                    Rua = "Tancredo Neves",
+                    Numero = 220,
+                    Bairro = "Centro",
+                    Cidade = "São Paulo",
+                    Estado = "São Paulo",
+                    Pais = "Brasil",
+                    Observacao = "Esquina com Bandeirantes 320"
+                }
+            };
+
+            EnderecoDTO newEndereco = new EnderecoDTO()
+            {
+                CEP = "34156278",
+                Rua = associado.Endereco.Rua + " Branco",
+                Numero = associado.Endereco.Numero + 4,
+                Bairro = "Sul",
+                Cidade = "Belo Horizonte",
+                Estado = "Minas Gerais",
+                Pais = "Brasil",
+                Observacao = "Esquina com Bandeirantes 320"
+            };
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, cadastroUser.Id.ToString()),
+                new Claim(ClaimTypes.Name, cadastroUser.Placa)
+            }));
+
+            var repositoryTest = new Mock<IAssociadoApplication>();
+            repositoryTest.Setup(r => r.GetByPlaca(It.IsAny<string>()))
+                .ReturnsAsync(associado);
+
+            repositoryTest.Setup(r => r.Edit(It.IsAny<AssociadoDTO>())).Throws<Exception>();
+
+            var controller = new AssociadosController(repositoryTest.Object);
+            controller.ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext() { User = user }
+            };
+
+            //Act
+            var result = await controller.Update(newEndereco);
 
             //Assert
             Assert.IsType<BadRequestObjectResult>(result);

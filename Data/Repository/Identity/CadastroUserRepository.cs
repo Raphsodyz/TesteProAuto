@@ -15,16 +15,19 @@ namespace Data.Repository.Identity
     {
         protected readonly UserManager<CadastroUser> _userManager;
         protected readonly SignInManager<CadastroUser> _signInManager;
+        protected readonly IPasswordHasher<CadastroUser> _passwordHasher;
         protected readonly CadastroContext _cadastroContext;
         protected readonly IConfiguration _configuration;
 
         public CadastroUserRepository(UserManager<CadastroUser> userManager,
                                   SignInManager<CadastroUser> signInManager,
+                                  IPasswordHasher<CadastroUser> passwordHasher,
                                   CadastroContext cadastroContext,
                                   IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _passwordHasher = passwordHasher;
             _cadastroContext = cadastroContext;
             _configuration = configuration;
         }
@@ -42,7 +45,6 @@ namespace Data.Repository.Identity
             int carroId = carro.Id;
 
             var associado = cadastroUser.CreateAssociado(cadastroUser);
-            associado.CarroId = enderecoId;
             associado.EnderecoId = carroId;
             await _cadastroContext.Associados.AddAsync(associado);
             await _cadastroContext.SaveChangesAsync();
