@@ -117,7 +117,7 @@ namespace CadastroWebApi
                     HttpMethod.Get,
                     null);
 
-                options.AddLink<AssociadoDTO>("mostrar-associado",
+                options.AddLink<AssociadoDTO>("atualizarEndereço-associado",
                     "Own-Update",
                     HttpMethod.Put,
                     null);

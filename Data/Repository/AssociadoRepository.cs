@@ -39,10 +39,10 @@ namespace Data.Repository
             _cadastroContext.Associados.Remove(entity);
         }
 
-        public async Task<Associado> GetByCPF(string cpf)
+        public async Task<Associado> GetByPlaca(string placa)
         {
             return await _cadastroContext.Associados.Include(a => a.Endereco)
-                .Include(a => a.Carro).Where(a => a.CPF == cpf).FirstAsync();
+                .Include(a => a.Carro).Where(a => a.Carro.Placa == placa).FirstAsync();
         }
     }
 }

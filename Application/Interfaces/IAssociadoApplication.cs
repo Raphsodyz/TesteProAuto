@@ -4,6 +4,6 @@ namespace Application.Interfaces
 {
     public interface IAssociadoApplication : IApplication<AssociadoDTO>
     {
-        Task<AssociadoDTO> GetByCPF(string cpf);
+        Task<AssociadoDTO> GetByPlaca(string cpf);
     }
 }

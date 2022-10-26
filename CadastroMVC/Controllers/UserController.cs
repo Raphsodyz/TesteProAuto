@@ -57,7 +57,7 @@ namespace CadastroMVC.Controllers
 
                     return RedirectToAction("Profile", "User");
                 }
-                return View("Errors");
+                return View("Errors", StatusCode(StatusCodes.Status500InternalServerError, "Serviço indisponível."));
             }
             return View("Login");
         }
@@ -79,7 +79,7 @@ namespace CadastroMVC.Controllers
                     TempData["Success"] = "Cadastro efetuado com sucesso! Entre com seu CPF e placa";
                     return View("Login");
                 }
-                return View("Errors");
+                return View("Errors", StatusCode(StatusCodes.Status500InternalServerError, "Serviço indisponível."));
             }
             return View("Register");
         }
@@ -105,7 +105,7 @@ namespace CadastroMVC.Controllers
                     TempData["Update"] = "Dados atualizados com sucesso!";
                     return RedirectToAction("Profile", "User");
                 }
-                return View("Errors");
+                return View("Errors", StatusCode(StatusCodes.Status500InternalServerError, "Serviço indisponível."));
             }
             return View("Update");
         }

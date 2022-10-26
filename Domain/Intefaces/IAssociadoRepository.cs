@@ -4,6 +4,6 @@ namespace Domain.Intefaces
 {
     public interface IAssociadoRepository : IRepository<Associado>
     {
-        Task<Associado> GetByCPF(string cpf);
+        Task<Associado> GetByPlaca(string placa);
     }
 }

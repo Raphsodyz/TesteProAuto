@@ -54,7 +54,7 @@ namespace CadastroWebApi.Controllers
             try
             {
                 var associado = User.Identity.Name;
-                var show = await _associadoApplication.GetByCPF(associado);
+                var show = await _associadoApplication.GetByPlaca(associado);
                 if(show != null)
                 {
                     return this.HATEOASResult(show, (a) => this.Ok(a));
@@ -77,7 +77,7 @@ namespace CadastroWebApi.Controllers
             try
             {
                 var associado = User.Identity.Name;
-                var user = await _associadoApplication.GetByCPF(associado);
+                var user = await _associadoApplication.GetByPlaca(associado);
 
                 if (user != null)
                 {

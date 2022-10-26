@@ -65,9 +65,9 @@ namespace Application
                 return result;
         }
 
-        public async Task<AssociadoDTO> GetByCPF(string cpf)
+        public async Task<AssociadoDTO> GetByPlaca(string placa)
         {
-            var associado = _mapper.Map<AssociadoDTO>(await _associadoRepository.GetByCPF(cpf));
+            var associado = _mapper.Map<AssociadoDTO>(await _associadoRepository.GetByPlaca(placa));
             if (associado == null)
             {
                 throw new Exception("Associado não encontrado.");

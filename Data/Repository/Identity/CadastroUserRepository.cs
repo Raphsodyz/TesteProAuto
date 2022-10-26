@@ -69,7 +69,7 @@ namespace Data.Repository.Identity
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, cadastroUser.Id.ToString()),
-                new Claim(ClaimTypes.Name, cadastroUser.CPF)
+                new Claim(ClaimTypes.Name, cadastroUser.Placa)
             };
 
             var types = await _userManager.GetRolesAsync(cadastroUser);
