@@ -45,7 +45,8 @@ namespace Data.Repository.Identity
             int carroId = carro.Id;
 
             var associado = cadastroUser.CreateAssociado(cadastroUser);
-            associado.EnderecoId = carroId;
+            associado.EnderecoId = enderecoId;
+            associado.CarroId = carroId;
             await _cadastroContext.Associados.AddAsync(associado);
             await _cadastroContext.SaveChangesAsync();
             int associadoId = associado.Id;

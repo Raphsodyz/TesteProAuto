@@ -2,6 +2,7 @@
 using CadastroMVC.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net;
 using System.Net.Http.Headers;
 
 namespace CadastroMVC.Controllers
@@ -56,6 +57,11 @@ namespace CadastroMVC.Controllers
                                                                  HttpContext.Session.GetString("token"));
 
                     return RedirectToAction("Profile", "User");
+                }
+                else if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    TempData["Unauthorized"] = "CPF ou Placa incorretos.";
+                    return View("Login");
                 }
                 return View("Errors", StatusCode(StatusCodes.Status500InternalServerError, "Serviço indisponível."));
             }
